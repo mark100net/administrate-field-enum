@@ -7,6 +7,7 @@ module Administrate
       class Engine < ::Rails::Engine
       end
 
+      attr_writer :resource_instance
       attr_writer :resource_name
 
       def self.searchable?
@@ -35,7 +36,14 @@ module Administrate
 
       def collection
         resource = Object.const_get(resource_name)
-        @collection ||= resource.respond_to?(collection_method) ? resource.send(collection_method) : []
+        @collection ||=
+          if @resource_instance.respond_to?(collection_method)
+            @resource_instance.send(collection_method)
+          elsif resource.respond_to?(collection_method)
+            resource.send(collection_method)
+          else
+            []
+          end
       end
 
       def collection_method
@@ -64,7 +72,10 @@ module Administrate
       end
 
       def collection_from_array
-        if collection.is_a?(Array) && !collection.empty?
+        if collection.is_a?(Array)
+          if collection.empty?
+            raise "Empty options in #{collection_method}"
+          end
           if collection.first.is_a?(Array)
             unless collection.first.length == 2
               raise ArgumentError.new("Expected array of length: 2, given: #{collection.first.length}")

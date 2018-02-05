@@ -3,10 +3,12 @@
 </div>
 <div class="field-unit__field">
   <% field.resource_name = f.object_name %>
-  <% if field.selectable_options.length < 4 %>
+  <% field.resource_instance = f.object %>
+  <% sel_options = field.selectable_options %>
+  <% if sel_options.length < 4 %>
     <%= f.collection_radio_buttons(
       field.attribute,
-      field.selectable_options,
+      sel_options,
       :last,
       :first
     ) do |b| %>
@@ -16,7 +18,7 @@
     <%= f.select(
       field.attribute,
       options_from_collection_for_select(
-        field.selectable_options,
+        sel_options,
         :last,
         :first,
         field.data.presence
