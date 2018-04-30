@@ -35,7 +35,6 @@ module Administrate
 
       def collection
         return options[:collection] if options.has_key?(:collection)
-
         @collection ||= @resource.respond_to?(collection_method) ? @resource.send(collection_method) : []
       end
 
