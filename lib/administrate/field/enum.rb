@@ -38,10 +38,10 @@ module Administrate
         @collection ||=
           if options.has_key?(:collection)
             options[:collection]
+          elsif @resource.class.respond_to?(collection_method)
+            @resource.class.send(collection_method)
           elsif @resource_instance.respond_to?(collection_method)
             @resource_instance.send(collection_method)
-          elsif @resource.respond_to?(collection_method)
-            @resource.send(collection_method)
           else
             []
           end
